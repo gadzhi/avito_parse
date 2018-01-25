@@ -10,5 +10,14 @@ class HabrSpider(CrawlSpider):
     ]
 
     def parse(self, response):  # метод обработки ответа
-        with open('response.html', 'wb') as f:
-            f.write(response.body)
+        for i in response.xpath('//div[@class="catalog-main catalog_table"]//div[@class="description item_table-description"]'):
+            yield {
+                'name': i.xpath('.//a[@class="item-description-title-link"]/text()').extract_first(),
+                'link': i.xpath('.//a[@class="item-description-title-link"]/@href').extract_first(),
+                'price': i.xpath('.//div[@class="about"]/text()').extract_first(),
+                'data': i.xpath('.//div[@class="data"]/div[@class=""]/div[@class="date c-2"]/text()').extract_first(),
+            }
+#        next_page = response.xpath('//a[@class="pagination-page js-pagination-next"]/@href').extract_first()
+#       if next_page is not None:
+#            yield scrapy.Request(response.urljoin(next_page))
+
